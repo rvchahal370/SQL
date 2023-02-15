@@ -1,0 +1,53 @@
+/* Fetching the record from 1st table where first name is Ravneet */
+Select * from EmployeeDemoGraphic where First_Name= 'Ravneet'
+
+/* Fetching the record from 1st table where first name is not Ravneet */
+Select * from EmployeeDemoGraphic where First_Name <> 'Ravneet'
+
+/* Fetching the records from 1st table where age is more than 30 */
+Select * from EmployeeDemoGraphic where age=30
+
+/* Fetching the records from 1st table where age is more than 30 and Gender is Male */
+Select * from EmployeeDemoGraphic where Age > 30 and Gender='Male'
+
+/* Fetching the records from 1st table where age is more than 30 or Gender is Male */
+Select * from EmployeeDemoGraphic where Age > 30 OR Gender='Male'
+
+/* Fetching the records from 1st table where First_Name is NULL */
+Select * from EmployeeDemoGraphic where First_Name is NULL
+
+/* Fetching the records from 1st table where Last_Name is Not Null */
+Select * from EmployeeDemoGraphic where Last_Name is NOT NULL
+
+/* Fetching the records from 1st table where Last_Name starts with 'S' */
+Select * from EmployeeDemoGraphic where Last_Name like 'S%'
+
+/* Fetching the records from 1st table where Last_Name starts with S and having the O letter in the middle */
+Select * from EmployeeDemoGraphic where Last_Name like 'S%O%'
+
+/* Fetching the records from 1st table where Last_Name are Chahal, Martin and Scott */
+Select * from EmployeeDemoGraphic where Last_Name IN ('Chahal','Martin','Scott')
+
+/* Fetching the Gender from 1st table grouping by Gender */
+Select Gender from EmployeeDemoGraphic Group By Gender
+
+/* Fetching the Gender from 1st table group by Gender and Age */
+Select Gender from EmployeeDemoGraphic Group By Gender, Age
+
+/* Fetching the Gender and Age from 1st table where age > 30 and group by age and Gender */
+Select * from EmployeeDemoGraphic where Age > 30 Group By Age, Gender
+
+/* Fetching the Gender and Age count from 1st table where age > 30, Group By Gender and order by AgeCount ASC */
+Select Gender, Count(Age) as AgeCount from EmployeeDemoGraphic where Age > 30 Group By Gender Order By AgeCount
+
+/* Fetching the Gender and Age count from 1st table where age > 30, Group By Gender and order by AgeCount DESC */
+Select Gender, Count(Age) as AgeCount from EmployeeDemoGraphic where age > 30 Group By Gender Order By AgeCount DESC
+
+/* Fetching the records from 1st table order by Age and Gender ASC */
+Select * from EmployeeDemoGraphic Order By Age, Gender
+
+/* Fetching the records from 1st table Order By Age DESC and Gender DESC */
+Select * from EmployeeDemoGraphic Order By Age DESC, Gender DESC
+
+/* Fetching the records from 1st table Order By Age DESC and Gender DESC using the table numbers */
+Select * from EmployeeDemoGraphic Order By 4 DESC, 5 DESC
