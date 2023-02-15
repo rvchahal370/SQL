@@ -1,0 +1,36 @@
+/* Fetching all the records from 1st and 2nd tables using Full Outer Join */
+Select * from [SQL Tutorial].dbo.EmployeeDemoGraphic Full Outer Join [SQL Tutorial].dbo.EmployeeSalary ON EmployeeDemoGraphic.Employee_ID=EmployeeSalary.Employee_ID
+
+/* Fetching all the Common records from 1st and 2nd tables using Inner Join */
+Select * from [SQL Tutorial].dbo.EmployeeDemoGraphic Inner Join [SQL Tutorial}.dbo.EmployeeSalary ON EmployeeDemoGraphic.Employee_ID=EmployeeSalary.Employee_ID
+
+/* Fetching all the records from 1st table and commong records from 2nd table using Left Outer Join */
+Select * from EmployeeDemoGraphic Left Outer Join EmployeeSalary ON EmployeeDemoGraphic.Employee_ID=EmployeeSalary.Employee_ID
+
+/* Fetching all the recods from 2nd table and common records from 1st atble usin Right Join */
+Select * from EmployeeDemoGraphic Right Join EmployeeSalary ON EmployeeDemoGraphic.Employee_ID= EmployeeSalary.Employee_ID
+
+/* Fetching only Employe ID feom 1st table and First_Name, Last_Name, Age, JobTitle, Salary from both the tables */
+Select EmployeeDemoGraphic.Employee_ID, First_Name, Last_Name, Age, JobTitle, Salary from 
+EmployeeDemoGraphic Full Outer Join EmployeeSalary ON EmployeeDemoGraphic.Employee_ID= EmployeeSalary.Employee_ID
+
+/* Fetching only the common Employee_ID from 2nd tablle, First_Name, Last_Name, Salary from bothe the tables */
+Select EmployeeSalary.Employee_ID, First_Name, last_Name, Salary from 
+EmployeeDemoGraphic Inner Join EmployeeSalary ON EmployeeDemoGraphic.Employee_ID=EmployeeSalary.Employee_ID
+
+/* Trying to find the maximum salary where First name is not Michael */
+Select EmployeeDemoGraphic.Employee_ID, First_Name, Last_Name, Salary from EmployeeDemoGraphic Inner Join EmployeeSalary 
+ON EmployeeDemoGraphic.Employee_ID=EmployeeSalary.Employee_ID where First_Name <> 'Michael' Order By Salary DESC
+
+/* Fetching only Top 5 salaries with First_Name, Last_Name and Employee_ID where Last_Name is not Hudson */
+Select Top(5) EmployeeDemoGraphic.Employee_ID, First_Name, Last_Name, Salary from EmployeeDemoGraphic Inner Join EmployeeSalary
+ON EmployeeDemoGraphic.Employee_ID=EmployeeSalary.Employee_ID where Last_Name <> 'Hudson' Order By DESC
+
+/* Find the average salary of different Age Employees with the JobTitle of Salesman */
+Select Age, JobTitle, AVG(Salary) AS AverageSalary from EmployeeDemoGraphic Inner Join EmployeeSalary
+ON EmployeeDemoGraphic.Employee_ID=EmployeeSalary.Employee_ID where JobTitle= 'Salesman' Group By JobTitle,Age
+
+/* Note- data aggregation is impossible without Group By, Aggregation functions are SUM(), AVG(), MIN(), MAX(), COUNT() */
+
+
+
