@@ -1,0 +1,26 @@
+/* Union is used to combine the data from two table which are having the same number of columns and of same data types,
+whereas joins can combine the data from two differenet tables but it will be done with help of one common column like Employee Id, Union don't require comumn column
+joins adds another column but union adds another rows */
+
+/* inserted the values into EmployeeDemoGraphic table */
+Insert into EmployeeDemoGraphic Values
+(1011, 'Ryan', 'Howard', 26, 'Male'),
+(NULL, 'Holly', 'Flax', NULL, NULL),
+(1013, 'Darryl', 'Philbin', NULL, 'Male')
+
+/* Created the new table as WareHouseEmployeeDemographics */
+Create table WareHouseEmployeeDemographics
+(Employee_ID int, First_Name varchar(50), Last_Name varchar(50), Age int, Gender varchar(50) )
+
+/* inserted the values into the WareHouseEmployeeDemographics  table */
+Insert into WareHouseEmployeeDemographics values
+(1013, 'Darryl', 'Philbin', NULL, 'Male'),
+(1050, 'Roy', 'Anderson', 31, 'Male'),
+(1051, 'Hidetoshi', 'Hasagawa', 40, 'Male'),
+(1052, 'Val', 'Johnson', 31, 'Female')
+
+/* Fetching the data from EmployeeDemoGraphics and WareHouseEmployeeDemographics table using Union */
+Select * from EmployeeDemoGraphics UNION Select * from WareHouseEmployeeDemographics
+
+/* Fetching all the records from both the tables including NULL values */
+Select * from EmployeeDemographics UNION ALL select * from WareHouseEmployeeDemographics
