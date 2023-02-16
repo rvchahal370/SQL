@@ -1,0 +1,28 @@
+/* Differentiate the data on the based of different age group */
+Seelct First_Name, Last_Name, Age,
+CASE
+WHEN AGE > 30 THEN 'OLD'
+WHEN AGE BETWEEN 27 AND 30 THEN 'YOUNG'
+WHEN AGE <27 THEN 'TODLER'
+END AS AGEGROUP
+from EmployeeDemoGraphic
+
+/* increase the salary as per the different JobTitle */
+Select First_Name, Last_Name, JobTitle, Salary,
+CASE
+WHEN JobTitle = 'Salesman' THEN Salary + (Salary * .10)
+WHEN JobTitle = 'Accountant' THEN Salary * (Salary * .03)
+WHEN JobTitle = 'Receptionist' THEN Salary * (Salary * .01)
+ELSE Salary + (Salary * .04)
+END AS IncreasedSalary
+from EmployeeDemoGraphic JOIN EmployeeSalary ON EmployeeDemoGraphic.Employee_ID= EmployeeSalary.Employee_ID ORDER BY IncreasedSalary DESC
+
+/* Having clause is used for Aggregative functions like SUM(), AVG(), MAX(), MIN(), COUNT()
+WHERE cannot be used with the aggregative function and with the Group */
+
+/* Fetching the records where count of JobTitle are more than 1 */
+Select JobTitle, Count(JobTitle) AS JobTitleCount from EmployeeSalary Group By JobTitle Having Count(JobTitle) > 1
+
+/* Fetching the records from bothe the tables where average salary is more than 40000 */
+Select JobTitle, AVG(Salary) AS AverageSalary from EmployeeDemographic JOIN EmployeeSalary ON EmployeeDemographic.Employee_ID = EmployeeSalary.Employee_ID 
+Group By JobTile Having AVG(Salary) > 40000 Order By Salary DESC
