@@ -1,0 +1,37 @@
+/* Create the table as EmployeeErrors */
+Create table EmployeeErrors 
+(EmployeeID varchar(50)
+,FirstName varchar(50)
+,LastName varchar(50)
+)
+
+/* Inserting the values into the EmployeeErrors table */
+Insert into EmployeeErrors values 
+('1001  ', 'Jimbo', 'Halbert')
+,('  1002', 'Pamela', 'Beasely')
+,('1005', 'TOby', 'Flenderson - Fired')
+
+/* Trimming the Employee_ID from the EmployeeErrors table */
+Select Employee_ID, TRIM(Employee_ID) As TRIMID from EmployeeErrors
+
+/* Trimming the Employee_ID from the Right */
+Select Employee_ID, RTRIM(Employee_ID) AS TRIMID from EmployeeErrors
+
+/* Trimming the Employee_ID from the Left */
+Select Employee_ID, LTRIM(Employee_ID) from EmployeeErrors
+
+/* Replacing the character with the help of REPLACE */
+Select Last_Name, REPLACE(Last_Name, ' -  Fired', '') AS Fixed_Name from EmployeeErrors
+
+/*Fetching only first three letters of First_Name in the EmployeeErrors table */
+Select First_Name, SUBSTRING(First_Name, 1, 3) AS SubString from EmployeeErrors
+
+/* Fetching all the common records from the both the tables EmployeeDemographics and EmployeeErrors on the basis of first three letters of First_Name */
+Select SUBSTRING(Demo.FIRST_Name, 1, 3), SUBSTRING(Err.First_Name, 1, 3) from EmployeeDemographic AS Demo JOIN
+EmployeeErrors AS Err ON SUBSTRING(Demo.First_Name, 1, 3) = SUBSTRING(Err.First_Name, 1, 3)
+
+/* Fetching the First_Name from EmployeeError and converting them into Upper Case */
+Select First_Name, UPPER(First_Name) AS CapitalLetters from EmployeeErrors
+
+/* Fetching the Last_Name from the EmployeeErrors and converting them into Lowecase */
+Select Last_Name, LOWER(Last_Name) AS SmallLetters from EmployeeErrors
