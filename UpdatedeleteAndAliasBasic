@@ -1,0 +1,36 @@
+/* Updating the Employee_ID as 1012 in the EmployeeDemographic table */
+Update EmployeeDemographic SET Employee_ID = 1012 where First_Name = 'Holly' and Last_Name = 'Flax'
+
+/* Updating the Age and Gender in the EmployeeDemographic table for Employee_ID 1012 */
+Update EmployeeDemographic SET Age = '32', Gender = 'Male' where Employee_ID = 1012
+
+/* Deleting the row from EmployeeDemographic table where Employee_ID is 1013 */
+Delete from EmployeeDemographic where Employee_ID = 1013
+
+/* Using Alias to rename the particular Field */
+Select First_Name AS Fname from EmployeeDemographic
+
+/* Using Alias to rename the aggregative function */
+Select AVG(Salary) AS Average Salary from EmployeeSalary
+
+/* Using the Alias without using AS */
+Select First_Name Fname from EmployeeDemographic
+
+/* Using the Alias to combine different field into one */
+Select First_Name + ' ' + Last_Name As FullName from EmployeeDemographic
+
+/* Using Alias to rename the whole table */
+Select Demo.Age from EmployeeDemographic As Demo
+
+/* Using the Alias with joins */
+Select Demo.First_Name, Demo.Last_Name, Demo.Age, Sal.JobTitle, Sal.Salary, Ware.First_Name from EmployeeDemographic As Demo 
+Left Join EmployeeSalary AS Sal ON Demo.Employee_ID=Sal.Employee_ID Left Join WareHouseEmployeeDemographics As Ware ON Demo.Employee_ID=Ware.Employee_ID
+
+/* Partition By can be used with the aggregative functions without the Group By */
+Select First_Name, Last_Name, Age, Gender, JobTitle, Count(Gender) OVER (PARTITION BY Gender) AS GenderCount from EmployeeDemographic AS Demo
+Left Join EmployeeSalary AS Sal ON Demo.Employee_ID = Sal.Employee_ID
+
+/* Using Partition By to get the Records where Salary is more than 40000 Patition By Gender and Salary */
+Select First_Name, Last_Name, Age, Gender, JobTitle, Count(Gender) OVER (PARTITION BY Gender) AS GenderCount, AVG(Salary) OVER (PARTITION BY JobTitle) AS AverageSalary
+From EmployeeDemographic AS Demo JOIN EmployeeSalary AS Sal ON Demo.Employee_ID = Sal.Employee_ID Where Salary > 40000
+
