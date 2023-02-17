@@ -1,0 +1,37 @@
+/* CTE is used like Temp Table but unlike Temp tables the records are Temporary and not stored in the memory */
+/* Using the CTE to fetch all the records from the EmployeeDemographic */
+WITH CTE_Employee AS (Select First_Name, Last_Name, Age, Gender, JobTitle, Count(Gender) OVER (PARTITION BY Gender) AS GenderCount,
+AVG(Salary) OVER (PARTITION BY JobTitle) AS AverageSalary From EmployeeDemographic As Demo JOIN EmployeeSalary AS Sal
+ON Demo. Employee_ID = Sal.Employee_ID Where Salary > 40000)
+Select * From CTE_Employee
+
+/* Fetching First_Name, Last_Name, Gender and salary using CTE */
+WITH CTE_Employee AS (Select First_Name, Last_Name, Age, Gender, JobTitle, Count(Gender) OVER (PARTITION BY Gender) AS GenderCount,
+AVG(Salary) OVER (PARTITION BY JobTitle) AS AverageSalary From EmployeeDemographic AS Demo JOIN EmployeeSalary AS Sal
+ON Demo.Employee_ID = Sal.Employee_ID Where Salary > 40000)
+Select First_Name + ' ' + Last_Name AS Full_Name, Gender, AverageSalary From CTE_Employee
+
+/* Creating the Temp Table, Note: Temp table always starts with # */
+Create table #TempEmployee1 (Employee_ID int, JobTitle Varchar(50), Salary int)
+
+/* inserting the values into the newly created Temp table */
+Insert Into #TempEmployee1 values (1001, 'QA, '60000')
+
+/* Inserting the records into #Tempemployee1 from the already exited table */
+Insert Into #TempEmployee1 select * from EmployeeSalary
+
+/* Creating the another TempTable #TempEmployee2 */
+Create table #TempEmployee2 (JobTitle Varchar(50), NoOfPosition int, AverageSalary int, GenderCount int)
+
+/* Inserting the records into #TempEmployee2 with the aggregative functions */
+Insert into #TempEmployee2 Select JobTitle, Count(JobTitle), AVG(Salary), Count(Gender) from EmployeeDemographic AS Demo JOIN
+EmployeeSalary AS Sal ON Demo.Employee_ID = Sal.Employee_ID Group By JobTitle
+
+/* Creating and inserting the Values into Temp table without any restriction of 'Table already exist' */
+DROP TABLE IF EXISTS #TempEmployee2
+Create table #TempEmployee2 (JobTitle Varchar(50), NoOfPositions int, AverageSalary int, GenderCount int)
+
+Insert into #TempEmployee2 Select JobTitle, Count(JobTitle), AVG(Salary), Count(Gender) from EmployeeDemographic As Demo
+JOIN EmployeeSalary Sal ON Demo.Employee_ID = Sal.Employee_ID Group By Job Title
+
+Select * from #TempEmployee2
