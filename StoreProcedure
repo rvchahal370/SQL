@@ -1,0 +1,48 @@
+/* Store Procedure is a set of multiple SQL statements that can be executed and stored in the database */
+/* Store Procedure can be use with the different input values entered by multiple users */
+/* Store procedure is used to increase the performance and to decrease the traffic on the network */
+/* Once the store procedure is updated at one place then automatically it will be updated for another places/users */
+
+/* Punching the SQL query to create a new store procedure */
+Create PROCEDURE Test1 AS Select * from EmployeeSalary
+
+/* Query to run the store procedure */
+EXEC Test1
+
+/* Creating the temporary table through the store procedure */
+Create PROCEDURE TempPro AS
+Create table #TempEmployee1
+(
+JobTitle varchar(50),
+EmployeePerPosition int,
+AverageSalary int,
+AverageAge int
+)
+
+Insert into #TempEmployee1 Select JobTitle, Count(JobTitle), AVG(Salary), AVG(Age) from EmployeeDemographic as Demo
+JOIN EmployeeSalary AS Sal ON Demo.Employee_ID = Sal.Employee_ID Group By JobTitle
+
+Select * from #TempEmployee1
+
+EXEC TempPro
+
+/* Creating the Temporary table having different input values with the help of Procedure */
+Create PROCEDURE TempPro1 @JobTitle nvarchar(100) AS
+Create table # TempEmployee2
+(
+JobTitle varchar(50),
+EmployeePerPosition int,
+AverageSalary int,
+AverageAge int
+)
+
+Insert into #TempEmployee2 Select JobTitle, Count(JobTitle), AVG(Salary), AVG(Age) from EmployeeDemographic AS Demo JOIN
+EmployeeSalary AS Sal ON Demo.Employee_ID = Sal.Employee_ID where JobTitle = @JObTitle Group By JobTitle
+
+Select * from #TempEmployee2
+
+EXEC TempPro1
+
+/* User can Alter/Modify the procedure while choosing the Modify option after right clicking on the specific procedure */
+/*Query to Drop the Procedure */
+Drop PROCEDURE TempPro1
