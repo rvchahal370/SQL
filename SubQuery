@@ -1,0 +1,10 @@
+/* SubQuery is a query within the mail query */
+/* It can be slow as compare to CTE and Temporary tables */
+
+/* Writing the simple SubQuery */
+Select First_Name, Last_Name, (Select AVG(Age) from EmployeeDemographic) AS AverageAge from EmployeeDemographic'
+
+/* Using the SubQuery with the where clause */
+Select Employee_ID, JobTitle, Salary from EmployeeSalary where Employee_ID in 
+(Select Employee_ID from EmployeeDemographic where Age > 30)
+
