@@ -1,0 +1,114 @@
+/* It si the project based on the Coronavirus data collection from the ourworldindata website */
+/* Firstly data was downloaded from the website in CSV Excel format and transferred it into two different excel sheets, 1st is CovidDeaths and 2nd is CovidVaccinations */
+/* Thereafter imported the excel through 'SQL Server 2022 Import Export data' while choosing the source and destination address */
+
+/* Selecting the data from the CovidDeaths and CovidVaccinations table */
+Select * from PortfolioProject..CovidDeaths Order By 3,4 
+Select * from PortfolioProject..CovidVaccination Order By 3,4
+
+/* Selecting the specific colmns from the CovidDeaths Table */
+Select Location, Date, Total_cases, New_Cases, Total_deaths, population from PortfolioProject..CovidDeaths where continent is Not Null Order By 1,2
+
+/* Fetching Total cases vs Total Deaths Using CTE */
+WITH CTE_DeathPercentage AS (Select location, SUM(total_cases) OVER () AS Total_Cases, SUM(CAST(total_deaths AS bigint)) OVER () AS Total_Deaths 
+from PortfolioProject..CovidDeaths where continent is Not Null)
+Select location, (Total_Cases/Total_Deaths)*100 AS DeathPercentage from CTE_DeathPercentage Order By 1
+
+/* Fetching the records using the Likelihood */ 
+Select Location, Date, Total_cases, New_Cases, Total_Deaths from PortfolioProject..CovidDeaths where location like '%States%' and  continent is Not Null
+
+/* Query to find the data_type of the different column in the table */
+Select COLUMN_NAME, DATA_TYPE from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='CovidDeaths'
+
+/* Total_case vs Total population using the SubQuery */
+Select A.Location, (A.T_Cases/A.Pop)*100 AS Case_Percent from (Select Location, SUM(Total_Cases) AS T_Cases, SUM(population) AS Pop 
+from PortfolioProject..CovidDeaths where continent is Not Null Group By Location) A Order By A.Location 
+
+/* Fetching the Top 5 countries with the most infection percentage Rate */
+Select Top (5) A.Location, (A.T_Cases/A.Pop)*100 AS infectionPercent from (Select Location, SUM(Total_Cases) AS T_Cases, SUM(Population) AS Pop 
+from PortfolioProject..CovidDeaths where continent is Not Null Group By location) A Order By 2 DESC
+
+/* Fetching theTop countries with the highest infection percentage rate using the Max function */
+Select A.Location, A.population, A.T_Cases, CONCAT(A.InfectionPercent,'%') 
+from (Select Location, population, Max(Total_Cases) AS T_Cases, MAX(CEILING((Total_Cases/population)*100)) AS InfectionPercent from PortfolioProject..CovidDeaths 
+where continent is Not Null Group By location, population) A order By A.InfectionPercent DESC
+
+/* Showing countries with Highest Death Count per population */
+Select A.location, A.population, A.T_Deaths, CONCAT(A.DeathPercent,'%') 
+from (Select location, population, MAX(Total_Deaths) AS T_Deaths, MAX(ROUND((CAST(Total_Deaths AS int)/population)*100,4)) AS DeathPercent 
+from PortfolioProject..CovidDeaths where continent is Not Null Group By location, population) A Order By A.DeathPercent DESC
+
+/* Fetching the maimum deaths counts for the location continent wise */
+Select location, MAX(CAST(Total_Deaths AS INT)) AS Total_Deaths from PortfolioProject..CovidDeaths where continent IS NULL Group By location
+ORDER by 2 DESC
+
+/* Fetching the total death count data Continent wise */
+Select Continent, MAX(CAST(Total_Deaths AS INT)) AS Death_Count from PortfolioProject..CovidDeaths where continent is NOT NULL Group By continent
+
+/* Showing continents with highest death count per population */
+Select A.Continent, CONCAT(A.DeathPercent,'%') AS DeathPercentage 
+from (Select Continent, MAX(ROUND(CAST(Total_Deaths AS INT)/population*100,4)) AS DeathPercent from PortfolioProject..CovidDeaths 
+where Continent is NOT NULL Group By continent) A Order By A.DeathPercent DESC
+
+/* Calculating the death percentage of whole world each day */
+Select A.date, A.New_Cases, A.New_Deaths, NULLIF(CONCAT(A.Death_Percent,'%'),'%') AS DeathPercentage 
+from(Select date, SUM(New_Cases) AS New_Cases, SUM(CAST(New_Deaths AS INT)) AS New_Deaths, ROUND(SUM(CAST(New_Deaths AS INT))/NULLIF(SUM(New_Cases),0)*100,2) 
+AS Death_Percent from PortfolioProject..CovidDeaths Group by date) A Order By A.Death_Percent
+
+/* Calculating total death percentage of whole world */
+Select SUM(New_Cases) AS New_Cases, SUM(CAST(New_Deaths AS INT)) AS New_Deaths, ROUND(SUM(CAST(new_deaths AS INT))/NULLIF(SUM(new_cases),0)*100,2) AS Death_Percent
+from PortfolioProject..CovidDeaths
+
+/* Fetching the details from CovidVaccination table */
+Select * from PortfolioProject..CovidVaccination
+
+/* Joining the covidDeaths and Covid Vaccination table with the help of common date and location */
+Select * from PortfolioProject..CovidDeaths De JOIN PortfolioProject..CovidVaccination Vac ON De.location = Vac.location AND De.date = Vac.date
+
+/* looking at total population vs Vaccination */
+Select de.date, SUM(population) AS Total_Population, CAST(total_vaccinations AS BIGINT) AS Total_Vaccination, 
+ROUND(CAST(total_Vaccinations AS BIGINT)/SUM(population)*100,3) AS Vacc_Percent from PortfolioProject..CovidDeaths De 
+JOIN PortfolioProject..CovidVaccination Vac ON De.location = Vac.location AND De.date = Vac.date Group by De.date, total_vaccinations, population ORDER BY De.Date
+
+/* Fetching the new vaccination records for the each day */
+Select De.continent, de.location, de.date, population,new_vaccinations from PortfolioProject..CovidDeaths De 
+JOIN PortfolioProject..CovidVaccination Vac ON De.location = Vac.location AND De.date = Vac.dateWhere de.continent is NOT NULL Order by 1,2,3
+
+/* Fetching the total new vaccination order by date and location with the help of CTE */
+WITH VaccinationData (continent, location, date, population, New_Vaccination, RollingVaccination) AS
+(Select De.continent, de.location, de.date, population, CONVERT(bigint,new_vaccinations) AS New_Vaccination, 
+SUM(CONVERT(bigint, new_vaccinations)) OVER (PARTITION BY De.Location ORDER BY de.location,de.date) AS RollingVaccination
+from PortfolioProject..CovidDeaths De JOIN PortfolioProject..CovidVaccination Vac ON
+De.location = Vac.location AND De.date = Vac.date where de.continent IS NOT NULL)
+Select *, NULLIF(CONCAT(ROUND((RollingVaccination/population)*100,3),'%'),'%') AS VaccinationPercent from VaccinationData
+
+/* Fetching the total new vaccination order by date and location with the help of Temp table */
+DROP TABLE IF EXISTS #VaccinationReport
+Create table #VaccinationReport (
+Continent NVARCHAR(255),
+Location nvarchar(255),
+Date datetime,
+population numeric,
+New_Vaccination numeric,
+RollingVaccination numeric
+)
+
+Insert Into #VaccinationReport
+Select De.continent, De. location, De.date, population, new_vaccinations, SUM(CAST(new_vaccinations AS bigint)) OVER (PARTITION BY De.location Order By De.location, De.date) AS RollingVaccination
+from PortfolioProject..CovidDeaths De JOIN PortfolioProject..CovidVaccination Vac
+ON de.location = Vac.location AND De.date = Vac.date
+Where De.continent IS NOT NULL
+
+Select * from #VaccinationReport
+
+/* Creating a View */
+Create View VaccinationDataView AS
+Select De.continent, De. location, De.date, population, new_vaccinations, SUM(CAST(new_vaccinations AS bigint)) OVER (PARTITION BY De.location Order By De.location, De.date) AS RollingVaccination
+from PortfolioProject..CovidDeaths De JOIN PortfolioProject..CovidVaccination Vac
+ON de.location = Vac.location AND De.date = Vac.date
+Where De.continent IS NOT NULL
+
+Select * from VaccinationDataView
+
+/* Important points to note - what is the difference between nvarchar and varchar? - varchar is stored as regular 8 bit data (1 byte per character) but nvarchar stores data at 2 byte per character,
+Due to that nvarchar can hold upto 4000 characters and takes double the space as SQL Varchar. 
