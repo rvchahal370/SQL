@@ -1,4 +1,4 @@
-/* It si the project based on the Coronavirus data collection from the ourworldindata website */
+/* It is the project based on the Coronavirus data collection from the ourworldindata website */
 /* Firstly data was downloaded from the website in CSV Excel format and transferred it into two different excel sheets, 1st is CovidDeaths and 2nd is CovidVaccinations */
 /* Thereafter imported the excel through 'SQL Server 2022 Import Export data' while choosing the source and destination address */
 
