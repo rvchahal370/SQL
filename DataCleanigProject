@@ -104,3 +104,7 @@ Select * from PortfolioProject..NashvilleHousing
 
 Alter table PortfolioProject..NashvilleHousing
 Drop Column SaleDate, TaxDistrict, PropertyAddress, OwnerAddress
+
+/* Renaming the existing columns */
+SP_RENAME 'NashvilleHousing.Owner_Address', 'OwnerAddress', 'COLUMN'
+SP_RENAME 'NashvilleHousing.Property_Address', 'PropertyAddress', 'COLUMN'
